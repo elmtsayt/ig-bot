@@ -252,7 +252,8 @@ async def watch(update: Update, context: ContextTypes.DEFAULT_TYPE):
             changed_at = now
     else:
         changed_at = now
-cur.execute("""
+
+    cur.execute("""
         INSERT INTO watches (chat_id, username, state, changed_at, message_id)
         VALUES (?, ?, ?, ?, ?)
         ON CONFLICT(chat_id, username) DO UPDATE SET
@@ -472,7 +473,8 @@ async def monitor(app):
                     await app.bot.send_message(chat_id=chat_id, text=info_msg, parse_mode="HTML")
                 except Exception:
                     pass
-new_status_text = make_status_message(username, new_state, now)
+
+                new_status_text = make_status_message(username, new_state, now)
                 new_message_id = None
                 
                 try:
@@ -531,5 +533,5 @@ def main():
     app.run_polling()
 
 
-if name == "main":
+if __name__ == "__main__":
     main()
