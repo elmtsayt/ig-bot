@@ -2,6 +2,7 @@ import asyncio
 import sqlite3
 import time
 import re
+import os
 import aiohttp
 
 from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup
@@ -18,8 +19,7 @@ from telegram.error import RetryAfter, TelegramError
 # SETTINGS
 # ==================================================
 
-BOT_TOKEN = "8702037141:AAHtcXjH97AIxq4JWwU79mB92KUk95Ns5xc"
-
+BOT_TOKEN = os.environ.get("BOT_TOKEN", "8702037141:AAHtcXjH97AIxq4JWwU79mB92KUk95Ns5xc")
 INSTAGRAM_SESSION_ID = "35351858952:CuMWKOONfJ7OxV:7:AYnSM1cCCL8jLvxWfEKUwjAn8acIV7symRmJTeC51A"
 
 CHECK_INTERVAL = 60
@@ -402,7 +402,7 @@ async def status(update: Update, context: ContextTypes.DEFAULT_TYPE):
 # TASKS & MAIN
 # ==================================================
 
-async def live_counter(app):
+async def live_counter(app: Application):
     while True:
         try:
             con = get_db()
@@ -434,7 +434,7 @@ async def live_counter(app):
         await asyncio.sleep(DISPLAY_INTERVAL)
 
 
-async def monitor(app):
+async def monitor(app: Application):
     while True:
         try:
             con = get_db()
@@ -513,7 +513,7 @@ async def monitor(app):
         await asyncio.sleep(CHECK_INTERVAL)
 
 
-async def post_init(app):
+async def post_init(app: Application):
     asyncio.create_task(monitor(app))
     asyncio.create_task(live_counter(app))
 
@@ -530,7 +530,8 @@ def main():
     
     app.add_handler(CallbackQueryHandler(button_click_handler))
 
-    app.run_polling()
+    print("البوت يعمل بنجاح على Render...")
+    app.run_polling(drop_pending_updates=True)
 
 
 if __name__ == "__main__":
